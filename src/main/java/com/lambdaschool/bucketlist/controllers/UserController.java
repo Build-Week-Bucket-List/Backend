@@ -3,6 +3,7 @@ package com.lambdaschool.bucketlist.controllers;
 import com.lambdaschool.bucketlist.models.ErrorDetail;
 import com.lambdaschool.bucketlist.models.Friend;
 import com.lambdaschool.bucketlist.models.User;
+import com.lambdaschool.bucketlist.repository.UserRepository;
 import com.lambdaschool.bucketlist.services.FriendService;
 import com.lambdaschool.bucketlist.services.UserService;
 import io.swagger.annotations.*;
@@ -35,6 +36,9 @@ public class UserController
     @Autowired
     private FriendService friendService;
 
+    @Autowired
+    private UserRepository userrepos;
+
 //    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
 //    @GetMapping(value = "/users",
 //                produces = {"application/json"})
@@ -46,9 +50,16 @@ public class UserController
 //        return new ResponseEntity<>(myUsers, HttpStatus.OK);
 //    }
 
+    @GetMapping(value = "/user",
+            produces = {"application/json"})
+    public ResponseEntity<?> getUser(HttpServletRequest request, Authentication authentication) {
+        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
 
+        User u = userrepos.findByUsername(authentication.getName());
 
-//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+        return new ResponseEntity<>(u, HttpStatus.OK);
+    }
+//
 //    @GetMapping(value = "/user/{userId}",
 //                produces = {"application/json"})
 //    public ResponseEntity<?> getUser(HttpServletRequest request,
