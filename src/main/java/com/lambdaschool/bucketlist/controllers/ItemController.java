@@ -112,7 +112,7 @@ public class ItemController
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
-    @DeleteMapping("/item/{id}")
+    @DeleteMapping(value = "/item/{id}")
     public ResponseEntity<?> deleteItemById(HttpServletRequest request,
                                              @PathVariable
                                                      long id)
@@ -122,12 +122,13 @@ public class ItemController
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("/item/{id}")
+    @PutMapping(value = "/item/{id}")
     public ResponseEntity<?> UpdateItemById(HttpServletRequest request,
                                             @PathVariable
                                                     long id,
                                             @RequestBody Item newItem) {
         logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
+        System.out.println("*************************************" + newItem);
         itemService.update(id, newItem);
         return new ResponseEntity<>(HttpStatus.OK);
     }
