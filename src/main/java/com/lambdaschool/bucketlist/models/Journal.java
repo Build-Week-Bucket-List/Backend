@@ -11,17 +11,17 @@ public class Journal {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long journalentryid;
 
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "itemid",
-            nullable = false)
-    @JsonIgnoreProperties({"journal", "hibernateLazyInitializer"})
-    private User user;
+    @JoinColumn(name = "itemid")
+    @JsonIgnoreProperties({"item", "hibernateLazyInitializer"})
+    private Item item;
 
     @Column(nullable = false)
     private String entry;
 
-    public Journal(User user, String entry) {
-        this.user = user;
+    public Journal(Item item, String entry) {
+        this.item = item;
         this.entry = entry;
     }
 
@@ -36,12 +36,12 @@ public class Journal {
         this.journalentryid = journalentryid;
     }
 
-    public User getUser() {
-        return user;
+    public Item getItem() {
+        return item;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setItem(Item item) {
+        this.item = item;
     }
 
     public String getEntry() {

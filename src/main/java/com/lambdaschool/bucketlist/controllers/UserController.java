@@ -50,15 +50,15 @@ public class UserController
 //        return new ResponseEntity<>(myUsers, HttpStatus.OK);
 //    }
 
-    @GetMapping(value = "/user",
-            produces = {"application/json"})
-    public ResponseEntity<?> getUser(HttpServletRequest request, Authentication authentication) {
-        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
-
-        User u = userrepos.findByUsername(authentication.getName());
-
-        return new ResponseEntity<>(u, HttpStatus.OK);
-    }
+//    @GetMapping(value = "/user",
+//            produces = {"application/json"})
+//    public ResponseEntity<?> getUser(HttpServletRequest request, Authentication authentication) {
+//        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
+//
+//        User u = userrepos.findByUsername(authentication.getName());
+//
+//        return new ResponseEntity<>(u, HttpStatus.OK);
+//    }
 //
 //    @GetMapping(value = "/user/{userId}",
 //                produces = {"application/json"})

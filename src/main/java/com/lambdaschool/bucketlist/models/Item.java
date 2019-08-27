@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
+import java.util.List;
 
 @ApiModel(value = "Item", description = "Item object")
 @Entity
@@ -32,6 +33,12 @@ public class Item extends Auditable
 
     private boolean completed;
 
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "journalentryid")
+    @JsonIgnoreProperties({"journal", "hibernateLazyInitializer"})
+    private List<Journal> journal;
+
+
     public Item()
     {
     }
@@ -47,11 +54,12 @@ public class Item extends Auditable
         this.user = user;
     }
 
-    public Item(String itemtitle, String itemdesc, User user, boolean completed) {
+    public Item(String itemtitle, String itemdesc, User user, boolean completed, List<Journal> journal) {
         this.itemtitle = itemtitle;
         this.itemdesc = itemdesc;
         this.user = user;
         this.completed = completed;
+        this.journal = journal;
     }
 
     public long getItemid() {

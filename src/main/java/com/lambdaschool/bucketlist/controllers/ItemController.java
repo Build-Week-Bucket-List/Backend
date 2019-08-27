@@ -38,14 +38,15 @@ public class ItemController
     @Autowired
     private UserRepository userrepos;
 
-    @GetMapping(value = "",
-                produces = {"application/json"})
-    public ResponseEntity<?> listUsersItems(HttpServletRequest request, Authentication authentication)
-    {
+    @ApiOperation(value = "Returns the users info including userid, username, and items")
+    @GetMapping(value = "/user",
+            produces = {"application/json"})
+    public ResponseEntity<?> getUser(HttpServletRequest request, Authentication authentication) {
         logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
 
-        List<Item> allItems = itemService.findByUserName(authentication.getName());
-        return new ResponseEntity<>(allItems, HttpStatus.OK);
+        User u = userrepos.findByUsername(authentication.getName());
+
+        return new ResponseEntity<>(u, HttpStatus.OK);
     }
 
 
