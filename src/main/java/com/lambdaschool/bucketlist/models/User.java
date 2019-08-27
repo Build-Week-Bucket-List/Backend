@@ -1,5 +1,6 @@
 package com.lambdaschool.bucketlist.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
@@ -37,12 +38,13 @@ public class User extends Auditable
     @OneToMany(mappedBy = "user",
                cascade = CascadeType.ALL)
     @JsonIgnoreProperties("user")
+    @JsonIgnore
     private List<UserRoles> userRoles = new ArrayList<>();
 
     @OneToMany(mappedBy = "user",
             cascade = CascadeType.ALL)
     @JsonIgnoreProperties("user")
-    private List<UserRoles> friends = new ArrayList<>();
+    private List<Friend> friends = new ArrayList<>();
 
 
     @OneToMany(mappedBy = "user",
@@ -122,8 +124,10 @@ public class User extends Auditable
         this.items = items;
     }
 
+    @JsonIgnore
     public List<SimpleGrantedAuthority> getAuthority()
     {
+
         List<SimpleGrantedAuthority> rtnList = new ArrayList<>();
 
         for (UserRoles r : this.userRoles)
@@ -133,5 +137,13 @@ public class User extends Auditable
         }
 
         return rtnList;
+    }
+
+    public List<Friend> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(List<Friend> friends) {
+        this.friends = friends;
     }
 }

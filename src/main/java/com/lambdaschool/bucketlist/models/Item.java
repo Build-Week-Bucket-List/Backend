@@ -1,10 +1,13 @@
 package com.lambdaschool.bucketlist.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @ApiModel(value = "Item", description = "Item object")
@@ -28,14 +31,18 @@ public class Item extends Auditable
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userid",
                 nullable = false)
-    @JsonIgnoreProperties({"item", "hibernateLazyInitializer"})
+    @JsonIgnoreProperties({"item", "hibernateLazyInitializer", "user"})
+    @JsonIgnore
     private User user;
 
     private boolean completed;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "journalentryid")
-    @JsonIgnoreProperties({"journal", "hibernateLazyInitializer"})
+    private Date created = new Date();
+
+    @OneToMany(mappedBy = "item",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    @JsonIgnoreProperties({"item", "hibernateLazyInitializer"})
     private List<Journal> journal;
 
 
@@ -100,5 +107,22 @@ public class Item extends Auditable
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
+    }
+
+    public String getCreated() {
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyy HH:mm");
+        return sdf.format(created);
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    public List<Journal> getJournal() {
+        return journal;
+    }
+
+    public void setJournal(List<Journal> journal) {
+        this.journal = journal;
     }
 }

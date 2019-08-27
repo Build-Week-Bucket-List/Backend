@@ -3,6 +3,7 @@ package com.lambdaschool.bucketlist.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import java.util.Optional;
 
 @Entity
 @Table(name = "journals")
@@ -13,9 +14,10 @@ public class Journal {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "itemid")
+    @JoinColumn(name = "itemid", nullable = false)
     @JsonIgnoreProperties({"item", "hibernateLazyInitializer"})
     private Item item;
+
 
     @Column(nullable = false)
     private String entry;
@@ -24,6 +26,7 @@ public class Journal {
         this.item = item;
         this.entry = entry;
     }
+
 
     public Journal() {
     }

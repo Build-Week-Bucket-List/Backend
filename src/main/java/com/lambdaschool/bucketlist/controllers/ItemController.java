@@ -2,6 +2,7 @@ package com.lambdaschool.bucketlist.controllers;
 
 import com.lambdaschool.bucketlist.models.ErrorDetail;
 import com.lambdaschool.bucketlist.models.Item;
+import com.lambdaschool.bucketlist.models.Journal;
 import com.lambdaschool.bucketlist.models.User;
 import com.lambdaschool.bucketlist.repository.UserRepository;
 import com.lambdaschool.bucketlist.services.ItemService;
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -99,19 +101,34 @@ public class ItemController
         HttpHeaders responseHeaders = new HttpHeaders();
 //        URI newQuoteURI = ServletUriComponentsBuilder.fromCurrentRequest().path("/{itemid}").buildAndExpand(newItem.getItemid()).toUri();
 //        responseHeaders.setLocation(newQuoteURI);
-
-        return new ResponseEntity<>("Bucket list item created successfully", responseHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<>(itemService.findItemById(item.getItemid()), responseHeaders, HttpStatus.CREATED);
     }
 
+    @PostMapping(value = "/journal/{itemid}", consumes = {"application/json"}, produces = {"application/json"})
+    public ResponseEntity<?> addToJournal(@PathVariable long itemid,
+                                          @RequestBody String journalentry){
 
-//    @DeleteMapping("/item/{id}")
-//    public ResponseEntity<?> deleteItemById(HttpServletRequest request,
-//                                             @PathVariable
-//                                                     long id)
-//    {
-//        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
-//
-//        itemService.delete(id);
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
+        itemService.addToJournal(itemid, journalentry);
+        return new ResponseEntity<>(null, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/item/{id}")
+    public ResponseEntity<?> deleteItemById(HttpServletRequest request,
+                                             @PathVariable
+                                                     long id)
+    {
+        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
+        itemService.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping("/item/{id}")
+    public ResponseEntity<?> UpdateItemById(HttpServletRequest request,
+                                            @PathVariable
+                                                    long id,
+                                            @RequestBody Item newItem) {
+        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
+        itemService.update(id, newItem);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

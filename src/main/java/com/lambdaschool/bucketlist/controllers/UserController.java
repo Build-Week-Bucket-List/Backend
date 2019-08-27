@@ -50,15 +50,16 @@ public class UserController
 //        return new ResponseEntity<>(myUsers, HttpStatus.OK);
 //    }
 
-//    @GetMapping(value = "/user",
-//            produces = {"application/json"})
-//    public ResponseEntity<?> getUser(HttpServletRequest request, Authentication authentication) {
-//        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
-//
-//        User u = userrepos.findByUsername(authentication.getName());
-//
-//        return new ResponseEntity<>(u, HttpStatus.OK);
-//    }
+    @GetMapping(value = "/user",
+            produces = {"application/json"})
+    public ResponseEntity<?> getUser(HttpServletRequest request, Authentication authentication) {
+        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
+
+        User u = userrepos.findByUsername(authentication.getName());
+        long userid = u.getUserid();
+        u.setFriends(friendService.getMyFriends(userid));
+        return new ResponseEntity<>(u, HttpStatus.OK);
+    }
 //
 //    @GetMapping(value = "/user/{userId}",
 //                produces = {"application/json"})
@@ -112,6 +113,8 @@ public class UserController
         friendService.update(requestid);
         return  new ResponseEntity<>(null, HttpStatus.OK);
     }
+
+
 
 //    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
 //    @PostMapping(value = "/user",
