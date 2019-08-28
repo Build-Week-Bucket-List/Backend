@@ -5,4 +5,5 @@ public interface GetFriends {
     boolean getAccepted();
     String getFriendusername();
     String getRequester();
+    long getUserid();
 }

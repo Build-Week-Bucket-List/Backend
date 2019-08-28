@@ -35,6 +35,8 @@ public class Item extends Auditable
     @JsonIgnore
     private User user;
 
+    private String image;
+
     private boolean completed;
 
     private Date created = new Date();
@@ -61,6 +63,13 @@ public class Item extends Auditable
         this.user = user;
     }
 
+    public Item(String itemtitle, String itemdesc, User user, String image) {
+        this.itemtitle = itemtitle;
+        this.itemdesc = itemdesc;
+        this.user = user;
+        this.image = image;
+    }
+
     public Item(String itemtitle, String itemdesc, User user, boolean completed, List<Journal> journal) {
         this.itemtitle = itemtitle;
         this.itemdesc = itemdesc;
@@ -83,6 +92,14 @@ public class Item extends Auditable
 
     public void setItemtitle(String itemtitle) {
         this.itemtitle = itemtitle;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getItemdesc() {
@@ -109,14 +126,17 @@ public class Item extends Auditable
         this.completed = completed;
     }
 
-    public String getCreated() {
+    public Date getCreated() {
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyy HH:mm");
-        return sdf.format(created);
+//        return sdf.format(created);
+        return created;
     }
 
     public void setCreated(Date created) {
         this.created = created;
     }
+
+
 
     public List<Journal> getJournal() {
         return journal;

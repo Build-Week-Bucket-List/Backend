@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -101,8 +102,28 @@ public class ItemServiceImpl implements ItemService
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = userrepos.findByUsername(authentication.getName());
 
-        item.setUser(currentUser);
-        item.setItemid(id);
-        return listrepos.save(item);
+        Item currentItem = listrepos.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(Long.toString(id)));
+
+        currentItem.setItemtitle(item.getItemtitle());
+        currentItem.setItemdesc(item.getItemdesc());
+        currentItem.setCompleted(item.isCompleted());
+        currentItem.setImage(item.getImage());
+        currentItem.setItemid(item.getItemid());
+        currentItem.setUser(currentUser);
+        currentItem.setCreated(item.getCreated());
+
+        if(item.getJournal().size() > 0){
+            for (Journal j : item.getJournal())
+                {
+                    currentItem.getJournal().add(new Journal(j.getItem(), j.getEntry()));
+                }
+
+        }
+
+
+//        item.setUser(currentUser);
+//        item.setItemid(id);
+        return listrepos.save(currentItem);
     }
 }

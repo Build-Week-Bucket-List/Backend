@@ -44,7 +44,14 @@ public class User extends Auditable
     @OneToMany(mappedBy = "user",
             cascade = CascadeType.ALL)
     @JsonIgnoreProperties("user")
+    private List<Friend> requests = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user",
+            cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("user")
     private List<Friend> friends = new ArrayList<>();
+
+
 
 
     @OneToMany(mappedBy = "user",
@@ -55,6 +62,10 @@ public class User extends Auditable
 
     public User()
     {
+    }
+
+    public User(String username) {
+        this.username = username;
     }
 
     public User(String username, String password, List<UserRoles> userRoles)
@@ -145,5 +156,13 @@ public class User extends Auditable
 
     public void setFriends(List<Friend> friends) {
         this.friends = friends;
+    }
+
+    public List<Friend> getRequests() {
+        return requests;
+    }
+
+    public void setRequests(List<Friend> requests) {
+        this.requests = requests;
     }
 }

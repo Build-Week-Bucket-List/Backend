@@ -13,8 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 //
-//@Transactional
-//@Component
+@Transactional
+@Component
 public class SeedData implements CommandLineRunner
 {
     @Autowired

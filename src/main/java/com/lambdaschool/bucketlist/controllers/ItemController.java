@@ -5,6 +5,7 @@ import com.lambdaschool.bucketlist.models.Item;
 import com.lambdaschool.bucketlist.models.Journal;
 import com.lambdaschool.bucketlist.models.User;
 import com.lambdaschool.bucketlist.repository.UserRepository;
+import com.lambdaschool.bucketlist.services.FriendService;
 import com.lambdaschool.bucketlist.services.ItemService;
 import com.lambdaschool.bucketlist.services.UserService;
 import io.swagger.annotations.*;
@@ -40,6 +41,9 @@ public class ItemController
     @Autowired
     private UserRepository userrepos;
 
+    @Autowired
+    private FriendService friendService;
+
     @ApiOperation(value = "Returns the users info including userid, username, and items")
     @GetMapping(value = "/user",
             produces = {"application/json"})
@@ -47,6 +51,8 @@ public class ItemController
         logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
 
         User u = userrepos.findByUsername(authentication.getName());
+        u.setRequests(friendService.getMyFriends(u.getUsername()));
+        u.setFriends(friendService.getAcceptedFriends(u.getUsername()));
 
         return new ResponseEntity<>(u, HttpStatus.OK);
     }
@@ -128,7 +134,6 @@ public class ItemController
                                                     long id,
                                             @RequestBody Item newItem) {
         logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
-        System.out.println("*************************************" + newItem);
         itemService.update(id, newItem);
         return new ResponseEntity<>(HttpStatus.OK);
     }

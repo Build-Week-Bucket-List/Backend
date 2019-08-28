@@ -22,6 +22,7 @@ public class Journal {
     @Column(nullable = false)
     private String entry;
 
+
     public Journal(Item item, String entry) {
         this.item = item;
         this.entry = entry;
