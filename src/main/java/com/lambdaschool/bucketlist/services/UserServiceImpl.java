@@ -151,4 +151,9 @@ public class UserServiceImpl implements UserDetailsService, UserService
     public List<String> searchUsers(String username) {
         return userrepos.findLikeUsername(username);
     }
+
+    @Override
+    public List<Item> searchUsersLike(String username) {
+        return userrepos.findByUsernameLike(username.toLowerCase());
+    }
 }

@@ -12,7 +12,7 @@ public interface ItemService
 
     Item findItemById(long id);
 
-    List<Item> findByUserName(String username);
+    List<Item> findItemByUserName(String username);
 
     void delete(long id);
 
@@ -20,6 +20,10 @@ public interface ItemService
 
     Journal addToJournal(long id, String journalEntry);
 
+    void deleteFromJournal(long id);
+
     Item update(long id, Item item);
+
+    Journal updateJournal(long id, Journal journalEntry);
 
 }

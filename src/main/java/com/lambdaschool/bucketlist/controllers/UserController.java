@@ -1,9 +1,6 @@
 package com.lambdaschool.bucketlist.controllers;
 
-import com.lambdaschool.bucketlist.models.ErrorDetail;
-import com.lambdaschool.bucketlist.models.Friend;
-import com.lambdaschool.bucketlist.models.Response;
-import com.lambdaschool.bucketlist.models.User;
+import com.lambdaschool.bucketlist.models.*;
 import com.lambdaschool.bucketlist.repository.UserRepository;
 import com.lambdaschool.bucketlist.services.FriendService;
 import com.lambdaschool.bucketlist.services.UserService;
@@ -37,14 +34,15 @@ public class UserController
     @Autowired
     private FriendService friendService;
 
-    @Autowired
-    private UserRepository userrepos;
-
-
     @GetMapping(value = "/search/{username}", produces = {"application/json"})
     public ResponseEntity<?> searchUsers(@PathVariable String username){
         List<String> foundUsers = userService.searchUsers(username);
-        System.out.println("*****************************************************" + userService.searchUsers(username));
+        return new ResponseEntity<>(foundUsers, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/searchwithlist/{username}", produces = {"application/json"})
+    public ResponseEntity<?> searchUsersWithList(@PathVariable String username){
+        List<Item> foundUsers = userService.searchUsersLike(username);
         return new ResponseEntity<>(foundUsers, HttpStatus.OK);
     }
 
@@ -54,10 +52,10 @@ public class UserController
             @ApiResponse(code = 404, message = "Username not found", response = ErrorDetail.class),
             @ApiResponse(code = 500, message = "Server error", response = ErrorDetail.class)
     })
-    @PostMapping(value = "add/{username}", consumes = {"application/json"}, produces = {"application/json"})
+    @PostMapping(value = "add", consumes = {"application/json"}, produces = {"application/json"})
     public ResponseEntity<?> addFriend(
             @ApiParam(value = "Username", required = true, example = "JaneDoenomo")
-            @PathVariable
+            @RequestBody
                     String username,
             Authentication authentication){
 
@@ -67,7 +65,6 @@ public class UserController
         } else {
             newResponse.setError("Request already exists");
         }
-//        friendService.sendRequest(username, authentication.getName());
         return new ResponseEntity<>(newResponse, HttpStatus.OK);
     }
 
@@ -85,22 +82,6 @@ public class UserController
         return  new ResponseEntity<>(null, HttpStatus.OK);
     }
 
-
-
-//    @PutMapping(value = "/user/{id}")
-//    public ResponseEntity<?> updateUser(HttpServletRequest request,
-//                                        @RequestBody
-//                                                User updateUser,
-//                                        @PathVariable
-//                                                long id)
-//    {
-//        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
-//
-//        userService.update(updateUser, id);
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
-
-
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @DeleteMapping("/user/{id}")
     public ResponseEntity<?> deleteUserById(HttpServletRequest request,
@@ -110,6 +91,16 @@ public class UserController
         logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
 
         userService.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = "/friends/{id}")
+    public ResponseEntity<?> deleteFriendById(HttpServletRequest request,
+                                            @PathVariable
+                                                    long id)
+    {
+        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
+        friendService.delete(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

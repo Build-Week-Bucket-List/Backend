@@ -52,8 +52,6 @@ public class User extends Auditable
     private List<Friend> friends = new ArrayList<>();
 
 
-
-
     @OneToMany(mappedBy = "user",
                cascade = CascadeType.ALL,
                orphanRemoval = true)

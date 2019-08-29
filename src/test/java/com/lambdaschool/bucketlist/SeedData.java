@@ -8,10 +8,9 @@ import com.lambdaschool.bucketlist.services.RoleService;
 import com.lambdaschool.bucketlist.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+
 ////
 //@Transactional
 //@Component

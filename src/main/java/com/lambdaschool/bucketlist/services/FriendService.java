@@ -18,4 +18,6 @@ public interface FriendService {
     List<Friend> getMyFriends(String username);
 
     List<Friend> getAcceptedFriends(String username);
+
+    void delete(long id);
 }

@@ -22,12 +22,19 @@ public class Journal {
     @Column(nullable = false)
     private String entry;
 
+    private String username;
+
 
     public Journal(Item item, String entry) {
         this.item = item;
         this.entry = entry;
     }
 
+    public Journal(Item item, String entry, String username) {
+        this.item = item;
+        this.entry = entry;
+        this.username = username;
+    }
 
     public Journal() {
     }
@@ -54,5 +61,13 @@ public class Journal {
 
     public void setEntry(String entry) {
         this.entry = entry;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

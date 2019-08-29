@@ -1,5 +1,6 @@
 package com.lambdaschool.bucketlist.services;
 
+import com.lambdaschool.bucketlist.exceptions.ResourceNotFoundException;
 import com.lambdaschool.bucketlist.models.Friend;
 import com.lambdaschool.bucketlist.models.User;
 import com.lambdaschool.bucketlist.repository.FriendRepository;
@@ -25,7 +26,7 @@ public class FriendServiceImpl implements FriendService{
 
     @Override
     public Friend sendRequest(String request, String requester) {
-//        if(friendrepos.searchIfRequestExists(request, requester) != null){
+//        if(friendrepos.searchIfRequestExists(request.toLowerCase(), requester.toLowerCase()) != null){
 //            System.out.println("********************************************************************     The request doesn't exist" );
 //            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 //            User currentUser = userrepos.findByUsername(authentication.getName());
@@ -73,12 +74,23 @@ public class FriendServiceImpl implements FriendService{
 
     @Override
     public List<Friend> getMyFriends(String username) {
-        System.out.println("*******************************************************************************************" + friendrepos.getFriendRequests(username));
         return friendrepos.getFriendRequests(username.toLowerCase());
     }
 
     @Override
     public List<Friend> getAcceptedFriends(String username) {
         return friendrepos.getAcceptedFriends(username.toLowerCase());
+    }
+
+    @Override
+    @Transactional
+    public void delete(long id) {
+        if (friendrepos.findById(id).isPresent())
+        {
+            friendrepos.deleteById(id);
+        } else
+        {
+            throw new ResourceNotFoundException(Long.toString(id));
+        }
     }
 }

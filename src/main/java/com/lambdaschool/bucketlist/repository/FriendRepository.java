@@ -13,10 +13,10 @@ public interface FriendRepository extends CrudRepository<Friend, Long> {
     @Query(value = "SELECT * FROM friends WHERE LOWER(friendusername) = :myfriendslist AND accepted = false", nativeQuery = true)
     List<Friend> getFriendRequests(@Param("myfriendslist") String username);
 //      List<Friend> getFriendRequests();
-    @Query(value = "SELECT * FROM friends WHERE accepted = true AND friendusername = :username OR requester = :username", nativeQuery = true)
+    @Query(value = "SELECT * FROM friends WHERE accepted = true AND LOWER (friendusername) = :username OR LOWER (requester) = :username", nativeQuery = true)
     List<Friend> getAcceptedFriends(@Param("username") String user);
 
 
-    @Query(value = "SELECT * FROM friends WHERE friendusername = :username OR friendusername = :requester AND requester = :requester OR requester = :username", nativeQuery = true)
+    @Query(value = "SELECT * FROM friends WHERE LOWER (friendusername) = :username OR LOWER (friendusername) = :requester AND LOWER (requester) = :requester OR LOWER (requester) = :username", nativeQuery = true)
     Friend searchIfRequestExists(@Param("requester") String requester, @Param("username") String username);
 }
