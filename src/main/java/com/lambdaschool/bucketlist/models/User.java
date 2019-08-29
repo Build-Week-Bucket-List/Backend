@@ -77,6 +77,10 @@ public class User extends Auditable
         this.userRoles = userRoles;
     }
 
+    public User(String newUsernametest, String password) {
+        super();
+    }
+
     public long getUserid()
     {
         return userid;
