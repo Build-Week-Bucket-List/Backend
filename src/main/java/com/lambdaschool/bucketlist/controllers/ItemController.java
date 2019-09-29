@@ -1,9 +1,8 @@
 package com.lambdaschool.bucketlist.controllers;
 
-import com.lambdaschool.bucketlist.models.ErrorDetail;
-import com.lambdaschool.bucketlist.models.Item;
-import com.lambdaschool.bucketlist.models.User;
+import com.lambdaschool.bucketlist.models.*;
 import com.lambdaschool.bucketlist.repository.UserRepository;
+import com.lambdaschool.bucketlist.services.FriendService;
 import com.lambdaschool.bucketlist.services.ItemService;
 import com.lambdaschool.bucketlist.services.UserService;
 import io.swagger.annotations.*;
@@ -21,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -38,41 +38,42 @@ public class ItemController
     @Autowired
     private UserRepository userrepos;
 
-    @GetMapping(value = "",
-                produces = {"application/json"})
-    public ResponseEntity<?> listUsersItems(HttpServletRequest request, Authentication authentication)
-    {
+    @Autowired
+    private FriendService friendService;
+
+    @ApiOperation(value = "Returns the users info including userid, username, and items")
+    @GetMapping(value = "/user",
+            produces = {"application/json"})
+    public ResponseEntity<?> getUser(HttpServletRequest request, Authentication authentication) {
         logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
 
-        List<Item> allItems = itemService.findByUserName(authentication.getName());
-        return new ResponseEntity<>(allItems, HttpStatus.OK);
+        User u = userrepos.findByUsername(authentication.getName());
+        u.setRequests(friendService.getMyFriends(u.getUsername()));
+        u.setFriends(friendService.getAcceptedFriends(u.getUsername()));
+
+        return new ResponseEntity<>(u, HttpStatus.OK);
     }
 
 
-//    @GetMapping(value = "/{itemid}",
-//                produces = {"application/json"})
-//    public ResponseEntity<?> getItem(HttpServletRequest request,
-//                                      @PathVariable
-//                                              Long itemid)
-//    {
-//        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
-//
-//        Item q = itemService.findQuoteById(itemid);
-//        return new ResponseEntity<>(q, HttpStatus.OK);
-//    }
 
+    @GetMapping(value = "/username/{userName}",
+                produces = {"application/json"})
+    public ResponseEntity<?> findItemsByUserName(HttpServletRequest request,
+                                                 @PathVariable
+                                                         String userName)
+    {
+        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
+        Response newResponse = new Response();
 
-//    @GetMapping(value = "/username/{userName}",
-//                produces = {"application/json"})
-//    public ResponseEntity<?> findItemsByUserName(HttpServletRequest request,
-//                                                 @PathVariable
-//                                                         String userName)
-//    {
-//        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
-//
-//        List<Item> theItems = itemService.findByUserName(userName);
-//        return new ResponseEntity<>(theItems, HttpStatus.OK);
-//    }
+        List<Item> friendItems = itemService.findItemByUserName(userName.toLowerCase());
+        if(friendItems == null){
+            newResponse.setError("No Items for that user");
+            return new ResponseEntity<>(newResponse, HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(friendItems, HttpStatus.OK);
+
+        }
+    }
 
 //
     @ApiOperation(value = "Create new Bucket list item")
@@ -90,26 +91,61 @@ public class ItemController
                                         Authentication authentication) throws URISyntaxException
     {
         logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
-
         itemService.save(item);
-
-        // set the location header for the newly created resource
         HttpHeaders responseHeaders = new HttpHeaders();
-//        URI newQuoteURI = ServletUriComponentsBuilder.fromCurrentRequest().path("/{itemid}").buildAndExpand(newItem.getItemid()).toUri();
-//        responseHeaders.setLocation(newQuoteURI);
-
-        return new ResponseEntity<>("Bucket list item created successfully", responseHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<>(itemService.findItemById(item.getItemid()), responseHeaders, HttpStatus.CREATED);
     }
 
+    @PostMapping(value = "/journal/{itemid}", consumes = {"application/json"}, produces = {"application/json"})
+    public ResponseEntity<?> addToJournal(@PathVariable long itemid,
+                                          @RequestBody String journalentry){
 
-//    @DeleteMapping("/item/{id}")
-//    public ResponseEntity<?> deleteItemById(HttpServletRequest request,
-//                                             @PathVariable
-//                                                     long id)
-//    {
-//        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
-//
-//        itemService.delete(id);
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
+        itemService.addToJournal(itemid, journalentry);
+        return new ResponseEntity<>(itemService.findItemById(itemid), HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = "/journal/{journalentryid}")
+    public ResponseEntity<?> deleteJournalEntryById(HttpServletRequest request,
+                                            @PathVariable
+                                                    long journalentryid)
+    {
+        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
+        itemService.deleteFromJournal(journalentryid);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = "/item/{id}")
+    public ResponseEntity<?> deleteItemById(HttpServletRequest request,
+                                             @PathVariable
+                                                     long id)
+    {
+        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
+        itemService.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/item/{id}")
+    public ResponseEntity<?> UpdateItemById(HttpServletRequest request,
+                                            @PathVariable
+                                                    long id,
+                                            @RequestBody Item newItem) {
+        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
+        itemService.update(id, newItem);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/item/{itemid}/journal/{journalid}")
+    public ResponseEntity<?> UpdateJournalById(HttpServletRequest request,
+                                            @PathVariable
+                                                long itemid,
+                                            @PathVariable
+                                                    long journalid,
+                                            @RequestBody Journal newJournal) {
+        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
+        Item itemToUpdate = itemService.findItemById(itemid);
+        newJournal.setItem(itemToUpdate);
+
+        itemService.updateJournal(journalid, newJournal);
+        return new ResponseEntity<>(itemToUpdate, HttpStatus.OK);
+    }
 }

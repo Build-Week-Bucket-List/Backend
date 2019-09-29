@@ -1,7 +1,6 @@
 package com.lambdaschool.bucketlist.services;
 
 import com.lambdaschool.bucketlist.exceptions.ResourceNotFoundException;
-import com.lambdaschool.bucketlist.models.Friend;
 import com.lambdaschool.bucketlist.models.Item;
 import com.lambdaschool.bucketlist.models.User;
 import com.lambdaschool.bucketlist.models.UserRoles;
@@ -148,4 +147,13 @@ public class UserServiceImpl implements UserDetailsService, UserService
 
 }
 
+    @Override
+    public List<String> searchUsers(String username) {
+        return userrepos.findLikeUsername(username);
+    }
+
+    @Override
+    public List<Item> searchUsersLike(String username) {
+        return userrepos.findByUsernameLike(username.toLowerCase());
+    }
 }

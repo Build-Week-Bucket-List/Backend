@@ -3,6 +3,7 @@ package com.lambdaschool.bucketlist.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import java.util.Optional;
 
 @Entity
 @Table(name = "journals")
@@ -11,18 +12,28 @@ public class Journal {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long journalentryid;
 
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "itemid",
-            nullable = false)
-    @JsonIgnoreProperties({"journal", "hibernateLazyInitializer"})
-    private User user;
+    @JoinColumn(name = "itemid", nullable = false)
+    @JsonIgnoreProperties({"item", "hibernateLazyInitializer"})
+    private Item item;
+
 
     @Column(nullable = false)
     private String entry;
 
-    public Journal(User user, String entry) {
-        this.user = user;
+    private String username;
+
+
+    public Journal(Item item, String entry) {
+        this.item = item;
         this.entry = entry;
+    }
+
+    public Journal(Item item, String entry, String username) {
+        this.item = item;
+        this.entry = entry;
+        this.username = username;
     }
 
     public Journal() {
@@ -36,12 +47,12 @@ public class Journal {
         this.journalentryid = journalentryid;
     }
 
-    public User getUser() {
-        return user;
+    public Item getItem() {
+        return item;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setItem(Item item) {
+        this.item = item;
     }
 
     public String getEntry() {
@@ -50,5 +61,13 @@ public class Journal {
 
     public void setEntry(String entry) {
         this.entry = entry;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

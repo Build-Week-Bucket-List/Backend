@@ -1,10 +1,14 @@
 package com.lambdaschool.bucketlist.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 @ApiModel(value = "Item", description = "Item object")
 @Entity
@@ -27,10 +31,22 @@ public class Item extends Auditable
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userid",
                 nullable = false)
-    @JsonIgnoreProperties({"item", "hibernateLazyInitializer"})
+    @JsonIgnoreProperties({"item", "hibernateLazyInitializer", "user"})
+    @JsonIgnore
     private User user;
 
+    private String image;
+
     private boolean completed;
+
+    private Date created = new Date();
+
+    @OneToMany(mappedBy = "item",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    @JsonIgnoreProperties({"item", "hibernateLazyInitializer"})
+    private List<Journal> journal;
+
 
     public Item()
     {
@@ -47,11 +63,19 @@ public class Item extends Auditable
         this.user = user;
     }
 
-    public Item(String itemtitle, String itemdesc, User user, boolean completed) {
+    public Item(String itemtitle, String itemdesc, User user, String image) {
+        this.itemtitle = itemtitle;
+        this.itemdesc = itemdesc;
+        this.user = user;
+        this.image = image;
+    }
+
+    public Item(String itemtitle, String itemdesc, User user, boolean completed, List<Journal> journal) {
         this.itemtitle = itemtitle;
         this.itemdesc = itemdesc;
         this.user = user;
         this.completed = completed;
+        this.journal = journal;
     }
 
     public long getItemid() {
@@ -68,6 +92,14 @@ public class Item extends Auditable
 
     public void setItemtitle(String itemtitle) {
         this.itemtitle = itemtitle;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getItemdesc() {
@@ -92,5 +124,25 @@ public class Item extends Auditable
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
+    }
+
+    public Date getCreated() {
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyy HH:mm");
+//        return sdf.format(created);
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+
+
+    public List<Journal> getJournal() {
+        return journal;
+    }
+
+    public void setJournal(List<Journal> journal) {
+        this.journal = journal;
     }
 }

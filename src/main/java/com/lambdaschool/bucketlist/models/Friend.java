@@ -18,10 +18,18 @@ public class Friend {
 
     private boolean accepted;
 
-    public Friend(String friendusername, String requester, boolean accepted) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userid",
+            nullable = false)
+    @JsonIgnoreProperties({"friend", "hibernateLazyInitializer"})
+    private User user;
+
+
+    public Friend(String friendusername, String requester, boolean accepted, User user) {
         this.friendusername = friendusername;
         this.requester = requester;
         this.accepted = accepted;
+        this.user = user;
     }
 
     public Friend() {
@@ -57,5 +65,13 @@ public class Friend {
 
     public void setAccepted(boolean accepted) {
         this.accepted = accepted;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

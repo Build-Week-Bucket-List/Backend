@@ -1,5 +1,6 @@
 package com.lambdaschool.bucketlist.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
@@ -37,12 +38,18 @@ public class User extends Auditable
     @OneToMany(mappedBy = "user",
                cascade = CascadeType.ALL)
     @JsonIgnoreProperties("user")
+    @JsonIgnore
     private List<UserRoles> userRoles = new ArrayList<>();
 
     @OneToMany(mappedBy = "user",
             cascade = CascadeType.ALL)
     @JsonIgnoreProperties("user")
-    private List<UserRoles> friends = new ArrayList<>();
+    private List<Friend> requests = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user",
+            cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("user")
+    private List<Friend> friends = new ArrayList<>();
 
 
     @OneToMany(mappedBy = "user",
@@ -55,6 +62,10 @@ public class User extends Auditable
     {
     }
 
+    public User(String username) {
+        this.username = username;
+    }
+
     public User(String username, String password, List<UserRoles> userRoles)
     {
         setUsername(username);
@@ -64,6 +75,10 @@ public class User extends Auditable
             ur.setUser(this);
         }
         this.userRoles = userRoles;
+    }
+
+    public User(String newUsernametest, String password) {
+        super();
     }
 
     public long getUserid()
@@ -122,8 +137,10 @@ public class User extends Auditable
         this.items = items;
     }
 
+    @JsonIgnore
     public List<SimpleGrantedAuthority> getAuthority()
     {
+
         List<SimpleGrantedAuthority> rtnList = new ArrayList<>();
 
         for (UserRoles r : this.userRoles)
@@ -133,5 +150,21 @@ public class User extends Auditable
         }
 
         return rtnList;
+    }
+
+    public List<Friend> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(List<Friend> friends) {
+        this.friends = friends;
+    }
+
+    public List<Friend> getRequests() {
+        return requests;
+    }
+
+    public void setRequests(List<Friend> requests) {
+        this.requests = requests;
     }
 }
